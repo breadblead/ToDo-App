@@ -2,9 +2,22 @@ import React, { useEffect, useRef, useState } from 'react'
 import todo_icon from '../assets/todo_icon.png'
 import TodoItems from './TodoItems'
 
+//
+
+/*
+ * 
+ 
+toDoItem = {
+  id: 'string',
+  text: 'string',
+  isComplete: boolean,
+}
+
+ */
+
 const Todo = () => {
 
-const [todoList, setTodoList] = useState([]);
+const [todoList, setTodoList] = useState([]); // destructuring [todoList, setTodoList]
 
 const inputRef = useRef();
 
@@ -43,8 +56,12 @@ setTodoList((prevTodos)=>{
 }
 
 useEffect(()=>{
-    console.log(todoList);
-},[todoList])
+    
+  
+  console.log(todoList);
+
+
+}, [todoList])
 
 
   return (
@@ -57,18 +74,36 @@ useEffect(()=>{
 
       <div className='flex items-center my-7 bg-gray-200 rounded-full'>
         <input ref={inputRef} className='bg-transparent border-0 outline-none flex-1 h-14 pl-6 pr-2 placeholder:text-slate-600' type="text" placeholder='Добавьте свою задачу' />
-        <button onClick={add} className='border-none rounded-full bg-orange-600 w-32 h-14 text-white text-lg font-medium cursor-pointer'>Добавить +</button>
+        <button onClick={add} className='border-none rounded-full bg-red-600 w-32 h-14 text-white text-lg font-medium cursor-pointer'>Добавить +</button>
       </div>
 
       <div>
 
-        {todoList.map((item, index)=>{
-          return <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
-         })}
+        {/* 
+        
+          как в реакте рендерить списки?
 
+        { [].map() } js
+
+                 {
+          [
+            <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>,
+            <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>,
+            <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
+          ]
+
+         }
+        
+        */}
+
+        { todoList.map((item, index)=> {
+          return <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
+         }) }
+
+{[]}
       </div>
 
-    </div>
+    </div> 
   )
 }
 
