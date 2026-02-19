@@ -5,6 +5,7 @@ import TodoItems from './TodoItems'
 const Todo = () => {
 
 const [todoList, setTodoList] = useState([]);
+const [filter, setFilter] = useState('all');
 
 const inputRef = useRef();
 
@@ -40,7 +41,13 @@ setTodoList((prevTodos)=>{
         return todo;
     })
 })
+
 }
+const filteredTodos = todoList.filter((todo) =>{
+  if (filter === 'active') return !todo.isComplete;
+  if (filter === 'completed') return todo.isComplete;
+  return true;
+});
 
 useEffect(()=>{
     console.log(todoList);
@@ -60,9 +67,25 @@ useEffect(()=>{
         <button onClick={add} className='border-none rounded-full bg-orange-600 w-32 h-14 text-white text-lg font-medium cursor-pointer'>Добавить +</button>
       </div>
 
+      <div className='flex gap-2 my-4'>
+        <button onClick={() => setFilter('all')}
+          className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-orange-600 text-white' : 'bg-gray-200'}`}>
+           Все
+          </button>
+          <button onClick={() => setFilter('active')}
+          className={`px-4 py-2 rounded ${filter === 'active' ? 'bg-orange-600 text-white' : 'bg-gray-200'}`}>
+           Активные
+          </button>
+          <button onClick={() => setFilter('completed')}
+          className={`px-4 py-2 rounded ${filter === 'completed' ? 'bg-orange-600 text-white' : 'bg-gray-200'}`}>
+           Выполненные 
+          </button>
+
+      </div>
+
       <div>
 
-        {todoList.map((item, index)=>{
+        {filteredTodos.map((item, index)=>{
           return <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
          })}
 
