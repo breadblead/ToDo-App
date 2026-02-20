@@ -6,6 +6,7 @@ const Todo = () => {
 
 const [todoList, setTodoList] = useState([]);
 const [filter, setFilter] = useState('all');
+const [searchQuery, setSearchQuery] = useState('');
 
 const inputRef = useRef();
 
@@ -43,11 +44,18 @@ setTodoList((prevTodos)=>{
 })
 
 }
-const filteredTodos = todoList.filter((todo) =>{
+let filteredTodos = todoList.filter((todo) =>{
   if (filter === 'active') return !todo.isComplete;
   if (filter === 'completed') return todo.isComplete;
   return true;
 });
+
+if (searchQuery.trim() !== '') {
+  filteredTodos = filteredTodos.filter((todo) =>
+    todo.text.toLowerCase().includes(searchQuery.toLowerCase())
+);
+}
+
 
 useEffect(()=>{
     console.log(todoList);
@@ -80,6 +88,17 @@ useEffect(()=>{
           className={`px-4 py-2 rounded ${filter === 'completed' ? 'bg-orange-600 text-white' : 'bg-gray-200'}`}>
            Выполненные 
           </button>
+
+      </div>
+
+      <div className='my-4'>
+        <input 
+        type="text" 
+        placeholder='Поиск задач'
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-600'
+        />
 
       </div>
 
