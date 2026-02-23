@@ -7,6 +7,8 @@ const Todo = () => {
 const [todoList, setTodoList] = useState([]);
 const [filter, setFilter] = useState('all');
 const [searchQuery, setSearchQuery] = useState('');
+const [sortBy, setSortBy] = useState('date');
+const [sortDirection, setSortDirection] = useState('desc');
 
 const inputRef = useRef();
 
@@ -44,17 +46,44 @@ setTodoList((prevTodos)=>{
 })
 
 }
-let filteredTodos = todoList.filter((todo) =>{
+let processedTodos = todoList.filter((todo) =>{
   if (filter === 'active') return !todo.isComplete;
   if (filter === 'completed') return todo.isComplete;
   return true;
 });
 
 if (searchQuery.trim() !== '') {
-  filteredTodos = filteredTodos.filter((todo) =>
+  processedTodos = processedTodos.filter((todo) =>
     todo.text.toLowerCase().includes(searchQuery.toLowerCase())
 );
 }
+
+const sortedTodos = [...processedTodos].sort((a, b) =>{
+let comparison = 0;
+
+ if (sortBy === 'date') {
+  comparison = a.id - b.id;
+ }
+ if (sortBy === 'text'){
+  if (a.text < b.text) comparison = -1;
+  if (a.text > b.text) comparison = 1;
+  else comparison = 0;
+ }
+ if (sortBy === 'status') {
+  if (a.isComplete === b.isComplete) {
+    comparison = 0;
+  }
+  else {
+    if (a.isComplete === true && b.isComplete === false) {
+      comparison = 1;
+    }
+    else {
+      comparison = -1;
+    }
+  }
+ }
+ return sortDirection === 'asc' ? comparison : -comparison;
+});
 
 
 useEffect(()=>{
@@ -102,9 +131,27 @@ useEffect(()=>{
 
       </div>
 
+      <div className='flex items-center gap-2 my-4'>
+        <select value={sortBy} 
+        onChange={(e) => setSortBy(e.target.value)}
+        className='px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:b order-orange-600'>
+        <option value="date">По дате</option>
+        <option value="text">По алфавиту</option>
+        <option value="status">По статусу</option>
+        </select>
+
+        <button
+        onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+        className='px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100'
+        >
+          {sortDirection === 'asc' ? '↑' : '↓'}
+
+        </button>
+      </div>
+
       <div>
 
-        {filteredTodos.map((item, index)=>{
+        {sortedTodos.map((item, index)=>{
           return <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
          })}
 
