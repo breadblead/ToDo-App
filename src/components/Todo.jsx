@@ -9,6 +9,8 @@ const [filter, setFilter] = useState('all');
 const [searchQuery, setSearchQuery] = useState('');
 const [sortBy, setSortBy] = useState('date');
 const [sortDirection, setSortDirection] = useState('desc');
+const [editingId, setEditingId] = useState(null);
+const [editText, setEditText] = useState('');
 
 const inputRef = useRef();
 
@@ -42,10 +44,29 @@ setTodoList((prevTodos)=>{
            return {...todo, isComplete: !todo.isComplete} 
         }
         return todo;
-    })
-})
+    });
+});
+};
 
-}
+const startEditing = (id, currentText) => {
+  setEditingId(id);
+  setEditText(currentText);
+};
+const updateTodo = (id, newText) => {
+  if (newText.trim() === '') return;
+
+  setTodoList((prevTodos) =>
+    prevTodos.map((todo) =>
+    todo.id === id ? { ...todo, text: newText} : todo)
+  );
+  setEditingId(null);
+  setEditText('');
+};
+const cancelEdit = () => {
+  setEditingId(null);
+  setEditText('');
+};
+
 let processedTodos = todoList.filter((todo) =>{
   if (filter === 'active') return !todo.isComplete;
   if (filter === 'completed') return todo.isComplete;
@@ -134,7 +155,7 @@ useEffect(()=>{
       <div className='flex items-center gap-2 my-4'>
         <select value={sortBy} 
         onChange={(e) => setSortBy(e.target.value)}
-        className='px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:b order-orange-600'>
+        className='px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-600'>
         <option value="date">По дате</option>
         <option value="text">По алфавиту</option>
         <option value="status">По статусу</option>
@@ -152,7 +173,19 @@ useEffect(()=>{
       <div>
 
         {sortedTodos.map((item, index)=>{
-          return <TodoItems key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
+          return <TodoItems 
+          key={index} 
+          text={item.text} 
+          id={item.id} 
+          isComplete={item.isComplete} 
+          deleteTodo={deleteTodo} 
+          toggle={toggle} 
+          editingId={editingId} 
+          startEditing={startEditing} 
+          editText={editText}
+          setEditText={setEditText}
+          updateTodo={updateTodo}
+          cancelEdit={cancelEdit} />
          })}
 
       </div>
@@ -160,5 +193,4 @@ useEffect(()=>{
     </div>
   )
 }
-
 export default Todo
